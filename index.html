@@ -11,19 +11,31 @@
     <div class="container">
         <div class="todo-header">
             <h2>To-Do List</h2>
-            <img src="/images/notebook1.png" height="50px" />
+            <img src="images/checklistGif.gif" height="60px" /> 
         </div>
-      <!--<h1>To-Do List</h1>
-      <form id="form">
-        <input
-          type="text"
-          id="input"
-          placeholder="Add a to-do"
-          autocomplete="off"
+
+        <div class="todo-body">
+        <input 
+            type="text" 
+            id="todoInput" 
+            class="todo-input"
+            placeholder="Add your items" 
         />
-        <button type="submit">Add</button>
-      </form>
-      <ul id="todos"></ul> -->
+        
+        <img 
+           src="images/addBtn.png"
+            alt="+"
+            id="addButton"
+            onclick="CreateToDoItems();"
+        />
+
+        <h5 id="Alert"></h5>
+        <ul id="list-items" class="list-items"></ul>
+        
+
+        </div>
+      
+     
 
       <!--Add input field for adding tasks, 
       list to display tasks,

@@ -29,3 +29,58 @@ body{
     margin-bottom: 20px;
     padding-left: 5px;
 }
+
+.todo-body{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-left: 20px;
+    border-radius: 30px;
+    background: #edeef0;
+}
+
+.todo-body input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 15px 0;
+    font-size: 18px;
+}
+
+.todo-body img{
+    width: 65px;
+    height: 65px;
+    padding: 15px;
+    cursor: pointer;
+}
+
+ul li{
+    list-style: none;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 10px;
+}
+
+li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    background: #edeef0;
+}
+
+h5 {
+    text-align: center;
+    margin-bottom: 10px;
+    color: green;
+}
+
+.todo-controls {
+    width: 25px;
+    height: 25px;
+    padding: 3px;
+    margin-right: 5px;
+}
