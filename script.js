@@ -1,18 +1,15 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () { 
     const todoValue = document.getElementById('todoInput');
     const todoAlert = document.getElementById('Alert');
     const listItems = document.getElementById('list-items');
     const addToDo = document.getElementById('addBtn');
 
-    // Get todo list from local storage or create an empty array
     let todo = JSON.parse(localStorage.getItem('todo-list')) || [];
 
-    // Function to update the local storage
     function setLocalStorage() {
         localStorage.setItem('todo-list', JSON.stringify(todo));
     }
 
-    // Helper function to set alert messages
     function setAlertMessage(message) {
         todoAlert.innerHTML = message;
     }
@@ -20,24 +17,20 @@ document.addEventListener("DOMContentLoaded", function () {
     // CREATE function
     function CreateToDoItems() {
         if (!todoValue.value.trim()) {
-            // If user tries to add an empty item
             todoAlert.style.color = "red";
             setAlertMessage("Please enter your to-do text!");
             todoValue.focus(); 
         } else {
-            // Check if the entered item already exists in the list
             let IsPresent = todo.some((element) => element.item === todoValue.value.trim());
 
             if (IsPresent) {
-                // Item exists already
                 todoAlert.style.color = "red";
                 setAlertMessage("Oops! This item already exists in the list!");
                 return;
             }
 
-            // Add the item to the list
             let li = document.createElement('li');
-            li.classList.add('todo-item'); // Add a class for easy selection
+            li.classList.add('todo-item');
             const todoItems = `
                 <div class="todo-text">
                     ${todoValue.value.trim()}
@@ -50,93 +43,109 @@ document.addEventListener("DOMContentLoaded", function () {
             li.innerHTML = todoItems; 
             listItems.appendChild(li);
 
-            // Add the item to the local storage
             const itemList = { item: todoValue.value.trim(), isCompleted: false };
             todo.push(itemList);
             setLocalStorage();
 
-            // Clear input and set success message
             todoValue.value = "";
             todoAlert.style.color = "green";
             setAlertMessage("To-do item Created Successfully!");
 
-            // Add event listener for double-click completion
             const itemTextDiv = li.querySelector(".todo-text");
             itemTextDiv.addEventListener("dblclick", function(event) {
-                event.preventDefault(); //Prevent text highlighting
-                CompletedToDoItems(li); //Pass the li element to the function
+                event.preventDefault();
+                CompletedToDoItems(li);
             });
-    
         }
     }
-    //Listen for the enter key press
+
     todoValue.addEventListener('keyup', function(event) {
         if (event.key === "Enter") {
             CreateToDoItems();
         }
     });
-    // Event listener for the add button
+
     addToDo.addEventListener('click', CreateToDoItems);
 
-    //2) READ:
+    // READ function
     function ReadToDoItems() {
-       todo.forEach((element) => {
-          let li = document.createElement("li");
-          li.classList.add("todo-item");
-          let style = element.isCompleted ? "text-decoration: line-through" : "";
-          const todoItems = `
-            <div class="todo-text" style="${style}">
-                ${element.item}
-                ${element.isCompleted ? '<img class="todo-controls" src="images/checkmark.png" />' : ''}
-            </div>
-            <div>
-                ${!element.isCompleted ? '<img class="edit todo-controls" onclick="UpdateToDoItems(this)" src="images/editBtn.png" />' : ''}
-                <img class="delete todo-controls" onclick="DeleteToDoItems(this)" src="images/deleteBtn.png" />
-            </div>
-          `;
-          li.innerHTML = todoItems;
-          listItems.appendChild(li);
+        listItems.innerHTML = ""; // Clear list before rendering
+        todo.forEach((element) => {
+            let li = document.createElement("li");
+            li.classList.add("todo-item");
+            let style = element.isCompleted ? "text-decoration: line-through" : "";
+            const todoItems = `
+                <div class="todo-text" style="${style}">
+                    ${element.item}
+                    ${element.isCompleted ? '<img class="checkmark todo-controls" src="images/checkmark.png" />' : ''}
+                </div>
+                <div>
+                    ${!element.isCompleted ? '<img class="edit todo-controls" onclick="UpdateToDoItems(this)" src="images/editBtn.png" />' : ''}
+                    <img class="delete todo-controls" onclick="DeleteToDoItems(this)" src="images/deleteBtn.png" />
+                </div>
+            `;
+            li.innerHTML = todoItems;
+            listItems.appendChild(li);
 
-          // Add event listener for double-click completion
-          const itemTextDiv = li.querySelector(".todo-text");
-          itemTextDiv.addEventListener("dblclick", function(event) {
-              event.preventDefault(); //Prevent text highlighting
-              CompletedToDoItems(li);
-          });
-       });
+            const itemTextDiv = li.querySelector(".todo-text");
+            itemTextDiv.addEventListener("dblclick", function(event) {
+                event.preventDefault();
+                CompletedToDoItems(li);
+            });
+        });
     }
-    ReadToDoItems(); //Display the items on page load
+    ReadToDoItems();
 
-    // COMPLETED:
+    // COMPLETED/Undo function
     function CompletedToDoItems(itemElement) {
         const itemTextDiv = itemElement.querySelector(".todo-text");
         const itemText = itemTextDiv.innerText.trim();
-        
-        // Find the todo item in the array and mark it as completed
-        todo.forEach((element) => { 
-            if (element.item === itemText) {
-                element.isCompleted = true;
-                // Add strikethrough and checkmark
-                itemTextDiv.style.textDecoration = "line-through";
-                const checkmarkImg = document.createElement("img");
-                checkmarkImg.src = "images/checkmark.png";
-                checkmarkImg.className = "todo-controls checkmark";
-                itemTextDiv.appendChild(checkmarkImg);
 
-                // Remove the edit button
-                const editBtn = itemElement.querySelector(".edit"); // Find the edit button
+        todo.forEach((element) => { 
+            if (element.item === itemText && !element.isCompleted) {
+                element.isCompleted = true;
+                itemTextDiv.style.textDecoration = "line-through";
+
+                if (!itemTextDiv.querySelector(".checkmark")) {
+                    const checkmarkImg = document.createElement("img");
+                    checkmarkImg.src = "images/checkmark.png";
+                    checkmarkImg.className = "todo-controls checkmark";
+                    itemTextDiv.appendChild(checkmarkImg);
+                }
+
+                const editBtn = itemElement.querySelector(".edit");
                 if (editBtn) {
                      editBtn.remove();
                 }
 
-                setLocalStorage();
-
                 todoAlert.style.color = "green";
                 setAlertMessage("To-do item Completed Successfully! Keep it up :)");
-            }
-        });
+            } 
+            else if (element.item === itemText && element.isCompleted) {
+                element.isCompleted = false;
+                itemTextDiv.style.textDecoration = "";
 
-        
+                const checkmarkImg = itemTextDiv.querySelector(".checkmark");
+                if (checkmarkImg) {
+                    checkmarkImg.remove();
+                }
+
+                const controlsDiv = itemElement.querySelector("div:last-child");
+                const editBtn = document.createElement("img");
+                editBtn.src = "images/editBtn.png";
+                editBtn.className = "edit todo-controls";
+                editBtn.style.marginRight = "8px";
+                editBtn.onclick = function() {
+                    UpdateToDoItems(this);
+                };
+                const deleteBtn = controlsDiv.querySelector(".delete");
+                controlsDiv.insertBefore(editBtn, deleteBtn);
+
+                todoAlert.style.color = "gray";
+                setAlertMessage("To-do item marked as Incomplete!");
+            }
+            setLocalStorage();
+        });
     }
 });
 
@@ -167,7 +176,7 @@ function DeleteToDoItems(e) {
 
         localStorage.setItem('todo-list', JSON.stringify(todo));
         todoAlert.style.color = "green";
-        todoAlert.innerHTML="To-do item Deleted Successfully";
+        todoAlert.innerHTML="Item Deleted Successfully!";
     }
 }
 
@@ -176,6 +185,3 @@ function UpdateToDoItems(e) {
     // Implement edit logic here
     alert("Edit function is not yet implemented.");
 }
-
-
-
