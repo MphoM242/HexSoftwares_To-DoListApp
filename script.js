@@ -79,8 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // CREATE function
     function CreateToDoItems() {
-        if (!todoValue.value) { //ADD: check if value is not just white space!!!
-            //ADD: remove white space in the begginning and end of input before writing it in list
+        if (!todoValue.value.trim()) {
             // If user tries to add an empty item
             todoAlert.style.color = "red";
             setAlertMessage("Please enter your to-do text!");
