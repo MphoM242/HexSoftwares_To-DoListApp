@@ -84,3 +84,8 @@ h5 {
     padding: 3px;
     margin-right: 5px;
 }
+
+.todo-controls .checkmark{
+    user-select: none;
+    pointer-events: none;
+}
