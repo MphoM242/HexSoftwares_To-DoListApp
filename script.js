@@ -69,6 +69,12 @@ document.addEventListener("DOMContentLoaded", function () {
     
         }
     }
+    //Listen for the enter key press
+    todoValue.addEventListener('keyup', function(event) {
+        if (event.key === "Enter") {
+            CreateToDoItems();
+        }
+    });
     // Event listener for the add button
     addToDo.addEventListener('click', CreateToDoItems);
 
