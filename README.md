@@ -1,5 +1,5 @@
 <h1>To-Do List app</h1>
-Responsive and efficient web application by Mpho M.
+Responsive and efficient web application by Mpho M.  for HexSoftwares (Task 1- Project 2)
 <h2>About the Project</h2>
 First project developed during my one-month internship as a Web Development Intern at HexSoftwares. It is a simple To-Do List app, created using HTML, CSS and JavaScript.
 *It allows the users to add, update, remove, and mark tasks as completed. 
