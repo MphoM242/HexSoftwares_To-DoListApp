@@ -30,10 +30,22 @@
         </div>
 
         <h5 id="Alert"></h5>
-        <ul title="Double-click text to mark/unmark item as done!" id="list-items" class="list-items"></ul>
-        
-        
+        <ul title="Double-click text to mark/unmark item as done!" id="list-items" class="list-items"></ul>  
+    </div>
+
+    <!--Help Modal and button-->
+    <div id="helpModal" class="help-modal">
+      <div class="help-content">
+        <span class="close" onclick="toggleHelp()">&times;</span>
+            <h3>How to:</h3>
+            <p><b>1. Mark/unmark a task as complete</b>, double-click on its text. Completed task = text crossed out and  <b> &check;  </b> present. </p>
+            <p></p><b>2. Edit/Update a task</b>, click its pencil icon. Edit text and press Enter key or the Update button.</p>
+            <p><b>3. Delete/Remove a task</b>, click its red bin icon. Confirm by pressing "Ok" on alert message.</p>
+
       </div>
+    </div>
+    <button id="helpBtn" onclick="toggleHelp()">?</button>
+
     
   </body>
 </html>

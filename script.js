@@ -1,4 +1,19 @@
 document.addEventListener("DOMContentLoaded", function () { 
+    const helpModal=document.getElementById("helpModal");
+    const helpButton=document.getElementById("helpBtn");
+
+    window.toggleHelp = function toggleHelp() { 
+        helpModal.style.display = (helpModal.style.display === "block") ? "none" : "block";
+    };
+
+    // Close the modal if the user clicks outside of the help content
+    window.onclick = function(event) {
+        if (event.target === helpModal) {
+            helpModal.style.display = "none";
+    }
+    };
+
+
     const todoValue = document.getElementById('todoInput');
     const todoAlert = document.getElementById('Alert');
     const listItems = document.getElementById('list-items');
@@ -272,9 +287,19 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    //HELP function:
+    function toggleHelp(){ 
+        helpModal.style.display=(helpModal.style.display==="block") ? "none": "block";
+    }
+
     // Assign functions to the global scope
     window.UpdateToDoItems = UpdateToDoItems;
     window.UpdateOnSelectionItems = UpdateOnSelectionItems;
     window.DeleteToDoItems = DeleteToDoItems;
+
+    
 });
+
+
+
 
