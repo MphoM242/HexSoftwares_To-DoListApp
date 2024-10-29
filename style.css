@@ -22,11 +22,19 @@ body{
     width: 550px;
 }
 
+.container h6{
+    font-size: 10px;
+    margin-bottom: 30px;
+    margin-top: 1px;
+    text-align: center;
+    color: #565656;
+}
+
 .todo-header{
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     padding-left: 5px;
 }
 
@@ -90,9 +98,13 @@ h5 {
     pointer-events: none;
 }
 
+ul li:hover{
+    
+    background-color: #d1d2d3;
+}
 li {
     opacity: 0;
-    animation: new-item-animation 0.3s linear forwards;
+    animation: new-item-animation 0.5s linear forwards;
   }
   
   @keyframes new-item-animation {

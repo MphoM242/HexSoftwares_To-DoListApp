@@ -14,14 +14,15 @@ document.addEventListener("DOMContentLoaded", function () {
         localStorage.setItem('todo-list', JSON.stringify(todo));
     }
 
-    function setAlertMessage(message, color="gray") {
-        //set timer to clear the alert message after 3 seconds
+    //Function to display alert message
+    function setAlertMessage(message, color = "gray") {
+        todoAlert.removeAttribute("class");
         todoAlert.style.color = color;
-        todoAlert.innerHTML = message;
+        todoAlert.innerText = message;
         setTimeout(() => {
-            todoAlert.innerHTML = "";
-        }, 10000);
-    }
+          todoAlert.classList.add("toggleMe");
+        }, 8000);
+      }
 
     //Event listener for Enter key
     todoValue.addEventListener('keyup', function(event) { 
@@ -58,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
             let IsPresent = todo.some((element) => element.item === todoValue.value.trim());
 
             if (IsPresent) {
-                setAlertMessage("Oops! This item already exists in the list!","red");
+                setAlertMessage("Oops! This item already exists!","red");
                 return;
             }
 
@@ -99,9 +100,9 @@ document.addEventListener("DOMContentLoaded", function () {
             li.classList.add("todo-item");
             let style = element.isCompleted ? "text-decoration: line-through" : "";
             const todoItems = `
-                <div title="Click on text to mark/unmark as complete!" class="todo-text" style="${style}">
+                <div class="todo-text" style="${style}">
                     ${element.item}
-                    ${element.isCompleted ? '<img class="checkmark todo-controls" src="images/checkmark.png" />' : ''}
+                    ${element.isCompleted ? '<img class="checkmark todo-controls" src="images/checkmark2.png" />' : ''}
                 </div>
                 <div>
                     ${!element.isCompleted ? '<img class="edit todo-controls" onclick="UpdateToDoItems(this)" src="images/editBtn.png" />' : ''}
@@ -132,7 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 if (!itemTextDiv.querySelector(".checkmark")) {
                     const checkmarkImg = document.createElement("img");
-                    checkmarkImg.src = "images/checkmark.png";
+                    checkmarkImg.src = "images/checkmark2.png";
                     checkmarkImg.className = "todo-controls checkmark";
                     itemTextDiv.appendChild(checkmarkImg);
                 }
@@ -173,17 +174,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     //3) UPDATE function:
-    /*function UpdateToDoItems(e){
-        if (e.parentElement.parentElement.querySelector("div").style.textDecoration ==="") 
-        {
-            todoValue.value = e.parentElement.parentElement.querySelector("div").innerText;
-            updateText = e.parentElement.parentElement.querySelector("div");
-            addToDo.setAttribute("onclick", "UpdateOnSelectionItems()");
-            addToDo.setAttribute("src", "images/refresh.png");
-            todoValue.focus();
-            isUpdating = true;
-        }
-    }*/
         function UpdateToDoItems(e) {
             setAlertMessage("", "gray");
             if (e.parentElement.parentElement.querySelector("div").style.textDecoration === "") {
@@ -208,36 +198,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-    /*function UpdateOnSelectionItems() {
-        let IsPresent = todo.some((element) => element.item === todoValue.value.trim());
-      
-        if (IsPresent) {
-          setAlertMessage("This item already exists!", "red");
-          return;
-        }
-        else{
-      
-        todo.forEach((element) => {
-          if (element.item == updateText.innerText.trim()) {
-            element.item = todoValue.value.trim();
-            setAlertMessage("To-do item Updated Successfully!", "green");
-          }
-        });
-        setLocalStorage();
-      
-        updateText.innerText = todoValue.value;
-        addToDo.setAttribute("src", "images/addBtn.png"); 
-
-        setAlertMessage("To-do item Updated Successfully!", "green");
-        todoValue.value = "";
-        isUpdating = false;
-
-
-        //Delay the reset of the input field to allow the user to see the success message
-
-        }
-        
-      }*/
         function UpdateOnSelectionItems() {
             let isPresent = todo.some((element) => element.item === todoValue.value);
         
