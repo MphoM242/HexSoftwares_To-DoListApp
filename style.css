@@ -46,7 +46,7 @@ body{
     outline: none;
     background: transparent;
     padding: 15px 0;
-    font-size: 18px;
+    font-size: 17px;
 }
 
 .todo-body img{
@@ -58,7 +58,7 @@ body{
 
 ul li{
     list-style: none;
-    font-size: 18px;
+    font-size: 16px;
     cursor: pointer;
     padding: 10px;
 }
@@ -88,4 +88,10 @@ h5 {
 .todo-controls .checkmark{
     user-select: none;
     pointer-events: none;
+}
+
+h6{
+    text-align: center;
+    margin-top: 20px;
+    color: blue;
 }

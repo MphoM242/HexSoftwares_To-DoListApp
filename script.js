@@ -4,28 +4,61 @@ document.addEventListener("DOMContentLoaded", function () {
     const listItems = document.getElementById('list-items');
     const addToDo = document.getElementById('addBtn');
 
+    addToDo.setAttribute("title", "Add item!");
+
     let todo = JSON.parse(localStorage.getItem('todo-list')) || [];
+    let updateText = null; // Placeholder to track the item being updated
+    let isUpdating = false; // Placeholder to track if the user is updating an item
 
     function setLocalStorage() {
         localStorage.setItem('todo-list', JSON.stringify(todo));
     }
 
-    function setAlertMessage(message) {
+    function setAlertMessage(message, color="gray") {
+        //set timer to clear the alert message after 3 seconds
+        todoAlert.style.color = color;
         todoAlert.innerHTML = message;
+        setTimeout(() => {
+            todoAlert.innerHTML = "";
+        }, 10000);
     }
 
-    // CREATE function
+    //Event listener for Enter key
+    todoValue.addEventListener('keyup', function(event) { 
+        if (event.key === "Enter") {
+            if(isUpdating) {
+                UpdateOnSelectionItems(); 
+            }
+            else{
+                CreateToDoItems();
+            }
+            
+        }
+    });
+
+    //Event listener for Add button
+    addToDo.addEventListener('click', function() { 
+        if(isUpdating) {
+            UpdateOnSelectionItems(); 
+        }
+        else{
+            CreateToDoItems();
+        }
+    });
+
+    //1) CREATE function
     function CreateToDoItems() {
+        if(isUpdating) {
+            return; //Skip if we are updating an item
+        }
         if (!todoValue.value.trim()) {
-            todoAlert.style.color = "red";
-            setAlertMessage("Please enter your to-do text!");
+            setAlertMessage("Please enter your to-do text!","red");
             todoValue.focus(); 
         } else {
             let IsPresent = todo.some((element) => element.item === todoValue.value.trim());
 
             if (IsPresent) {
-                todoAlert.style.color = "red";
-                setAlertMessage("Oops! This item already exists in the list!");
+                setAlertMessage("Oops! This item already exists in the list!","red");
                 return;
             }
 
@@ -48,8 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
             setLocalStorage();
 
             todoValue.value = "";
-            todoAlert.style.color = "green";
-            setAlertMessage("To-do item Created Successfully!");
+            setAlertMessage("To-do item Created Successfully!", "green");
 
             const itemTextDiv = li.querySelector(".todo-text");
             itemTextDiv.addEventListener("dblclick", function(event) {
@@ -59,15 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    todoValue.addEventListener('keyup', function(event) {
-        if (event.key === "Enter") {
-            CreateToDoItems();
-        }
-    });
-
-    addToDo.addEventListener('click', CreateToDoItems);
-
-    // READ function
+    //2) READ function:
     function ReadToDoItems() {
         listItems.innerHTML = ""; // Clear list before rendering
         todo.forEach((element) => {
@@ -75,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
             li.classList.add("todo-item");
             let style = element.isCompleted ? "text-decoration: line-through" : "";
             const todoItems = `
-                <div class="todo-text" style="${style}">
+                <div title="Click on text to mark/unmark as complete!" class="todo-text" style="${style}">
                     ${element.item}
                     ${element.isCompleted ? '<img class="checkmark todo-controls" src="images/checkmark.png" />' : ''}
                 </div>
@@ -96,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     ReadToDoItems();
 
-    // COMPLETED/Undo function
+    // Mark COMPLETED/Undo function
     function CompletedToDoItems(itemElement) {
         const itemTextDiv = itemElement.querySelector(".todo-text");
         const itemText = itemTextDiv.innerText.trim();
@@ -118,8 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
                      editBtn.remove();
                 }
 
-                todoAlert.style.color = "green";
-                setAlertMessage("To-do item Completed Successfully! Keep it up :)");
+                setAlertMessage("To-do item Completed Successfully! Keep it up :)", "green");
             } 
             else if (element.item === itemText && element.isCompleted) {
                 element.isCompleted = false;
@@ -138,50 +161,160 @@ document.addEventListener("DOMContentLoaded", function () {
                 editBtn.onclick = function() {
                     UpdateToDoItems(this);
                 };
+
+                // Insert the edit button before the delete button
                 const deleteBtn = controlsDiv.querySelector(".delete");
                 controlsDiv.insertBefore(editBtn, deleteBtn);
 
-                todoAlert.style.color = "gray";
-                setAlertMessage("To-do item marked as Incomplete!");
+                setAlertMessage("To-do item marked as Incomplete!", "gray");
             }
             setLocalStorage();
         });
     }
+
+    //3) UPDATE function:
+    /*function UpdateToDoItems(e){
+        if (e.parentElement.parentElement.querySelector("div").style.textDecoration ==="") 
+        {
+            todoValue.value = e.parentElement.parentElement.querySelector("div").innerText;
+            updateText = e.parentElement.parentElement.querySelector("div");
+            addToDo.setAttribute("onclick", "UpdateOnSelectionItems()");
+            addToDo.setAttribute("src", "images/refresh.png");
+            todoValue.focus();
+            isUpdating = true;
+        }
+    }*/
+        function UpdateToDoItems(e) {
+            setAlertMessage("", "gray");
+            if (e.parentElement.parentElement.querySelector("div").style.textDecoration === "") {
+                todoValue.value = e.parentElement.parentElement.querySelector("div").innerText;
+                updateText = e.parentElement.parentElement.querySelector("div");
+        
+                isUpdating = true; // Set update mode to true
+                //addToDo.setAttribute("onclick", "UpdateOnSelectionItems()");
+                addToDo.setAttribute("src", "images/refresh.png");
+                addToDo.setAttribute("title", "Press Enter key or click here to Update!");
+        
+                // Add a cancel button to allow the user to cancel the update
+                let cancelBtn = document.createElement("img");
+                cancelBtn.src = "images/crossBtn.png";
+                cancelBtn.className = "cancel-btn";
+                cancelBtn.title = "Cancel Update!";
+                cancelBtn.onclick = CancelUpdate;
+
+                addToDo.parentNode.insertBefore(cancelBtn, addToDo.nextSibling);
+        
+                todoValue.focus();
+            }
+        }
+
+    /*function UpdateOnSelectionItems() {
+        let IsPresent = todo.some((element) => element.item === todoValue.value.trim());
+      
+        if (IsPresent) {
+          setAlertMessage("This item already exists!", "red");
+          return;
+        }
+        else{
+      
+        todo.forEach((element) => {
+          if (element.item == updateText.innerText.trim()) {
+            element.item = todoValue.value.trim();
+            setAlertMessage("To-do item Updated Successfully!", "green");
+          }
+        });
+        setLocalStorage();
+      
+        updateText.innerText = todoValue.value;
+        addToDo.setAttribute("src", "images/addBtn.png"); 
+
+        setAlertMessage("To-do item Updated Successfully!", "green");
+        todoValue.value = "";
+        isUpdating = false;
+
+
+        //Delay the reset of the input field to allow the user to see the success message
+
+        }
+        
+      }*/
+        function UpdateOnSelectionItems() {
+            let isPresent = todo.some((element) => element.item === todoValue.value);
+        
+            if (isPresent) {
+                setAlertMessage("This item already exists!", "red");
+                return;
+            }
+        
+            todo.forEach((element) => {
+                if (element.item === updateText.innerText.trim()) {
+                    element.item = todoValue.value;
+                }
+            });
+            setLocalStorage();
+        
+            updateText.innerText = todoValue.value;
+            setTimeout(() => {
+                todoValue.value = ""; 
+            }, 100); 
+            setAlertMessage("To-do item Updated Successfully!", "green");
+        
+            isUpdating = false; // Exit update mode after successful update
+            //addToDo.setAttribute("onclick", "CreateToDoItems()");
+            addToDo.setAttribute("src", "images/addBtn.png");
+            addToDo.setAttribute("title", "Press Enter key or click here to Add!");
+        
+            const cancelBtn = document.querySelector(".cancel-btn");
+            if (cancelBtn) cancelBtn.remove();
+        
+            
+        }
+
+        function CancelUpdate() {
+            todoValue.value = "";
+            updateText = null;
+        
+            isUpdating = false; // Exit update mode
+            //addToDo.setAttribute("onclick", "CreateToDoItems()");
+            addToDo.setAttribute("src", "images/addBtn.png");
+        
+            const cancelBtn = document.querySelector(".cancel-btn");
+            if (cancelBtn) cancelBtn.remove();
+        
+            setAlertMessage("Update canceled.", "gray");
+        }
+        
+
+    //4) DELETE function:
+    function DeleteToDoItems(e) {
+        //const todoValue=document.getElementById("todoInput");
+        //const todoAlert=document.getElementById('Alert');
+
+        let deleteValue = e.parentElement.parentElement.querySelector("div").innerText;
+
+        if(confirm(`Are you sure you want to delete "${deleteValue}"?`)){
+            e.parentElement.parentElement.setAttribute("class","deleted-item");
+            todoValue.focus();
+
+            //const todo = JSON.parse(localStorage.getItem('todo-list'));
+
+            const index=todo.findIndex((element) => element.item === deleteValue.trim());
+            if(index > -1){
+                todo.splice(index,1);
+            }
+                
+            setTimeout(() => {
+                e.parentElement.parentElement.remove();
+            },1000);
+
+            setLocalStorage();
+            setAlertMessage("Item Deleted Successfully!", "green");
+        }
+    }
+
+    // Assign functions to the global scope
+    window.UpdateToDoItems = UpdateToDoItems;
+    window.UpdateOnSelectionItems = UpdateOnSelectionItems;
+    window.DeleteToDoItems = DeleteToDoItems;
 });
 
-//4) DELETE (DONE):
-// Delete the item from the list and local storage
-//if user says ok on confirm box, then delete the item
-//if user says cancel on confirm box, then do nothing
-function DeleteToDoItems(e) {
-    const todoValue=document.getElementById("todoInput");
-    const todoAlert=document.getElementById('Alert');
-
-    let deleteValue = e.parentElement.parentElement.querySelector("div").innerText;
-
-    if(confirm(`Are you sure you want to delete "${deleteValue}"?`)){
-        e.parentElement.parentElement.setAttribute("class","deleted-item");
-        todoValue.focus();
-
-        const todo = JSON.parse(localStorage.getItem('todo-list'));
-
-        const index=todo.findIndex((element) => element.item === deleteValue.trim());
-        if(index > -1){
-            todo.splice(index,1);
-        }
-            
-        setTimeout(() => {
-            e.parentElement.parentElement.remove();
-        },1000);
-
-        localStorage.setItem('todo-list', JSON.stringify(todo));
-        todoAlert.style.color = "green";
-        todoAlert.innerHTML="Item Deleted Successfully!";
-    }
-}
-
-// UPDATE:
-function UpdateToDoItems(e) {
-    // Implement edit logic here
-    alert("Edit function is not yet implemented.");
-}
