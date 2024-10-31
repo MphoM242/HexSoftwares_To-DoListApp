@@ -9,7 +9,6 @@ First project developed during my one-month internship as a Web Development Inte
 The data is stored locally using browser storage. A user's taks list data will remain even after the site and/ or the browser is closed.
 
 <h2>Try it out :D </h2>
-<b>Click on the link:  </b> https://mphom242.github.io/ToDoListApp/
-
-
+<b>Click on the link:  </b> 
+https://mphom242.github.io/HexSoftwares_To-DoListApp/
 
